@@ -1,0 +1,42 @@
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #e0f2fe;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #0f172a;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    color: #0369a1;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    padding-bottom: 12px;
+}
+
+td {
+    padding: 16px 0;
+    border-top: 1px solid #f1f5f9;
+}
+
+.text-glow {
+    color: #0ea5e9;
+    font-weight: 700;
+}

@@ -1,0 +1,41 @@
+.task-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.pill[data-status="In Progress"] {
+    background: #ebf8ff;
+    color: #2b6cb0;
+}
+
+.pill[data-status="Completed"] {
+    background: #f0fff4;
+    color: #2f855a;
+}
+
+.pill[data-status="Pending"] {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.progress-bg {
+    background: #f1f5f9;
+    height: 8px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    background: #0ea5e9;
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease-out;
+}

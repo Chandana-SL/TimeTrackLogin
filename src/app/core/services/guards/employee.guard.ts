@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../auth.service';
+
 
 export const employeeGuard: CanActivateFn = () => {
     const authService = inject(AuthService);
@@ -12,7 +13,7 @@ export const employeeGuard: CanActivateFn = () => {
     }
 
     if (!user) {
-        router.navigate(['/login']);
+        router.navigate(['/signin']);
     } else {
         router.navigate(['/admin/dashboard']);
     }
