@@ -65,11 +65,12 @@ onSubmit() {
   if (this.signupForm.valid) {
     const userData = {
       email: this.signupForm.value.email.toLowerCase(),
-      role: this.signupForm.value.role
+      role: this.signupForm.value.role,
+      password: this.signupForm.value.password
     };
     
     // Save to localStorage so Sign-In can find it later
-    localStorage.setItem(userData.email, userData.role);
+    localStorage.setItem(userData.email, JSON.stringify({role:userData.role, password:userData.password}));
     
     alert(`Account created for ${this.signupForm.value.fullName} as ${userData.role}`);
     this.router.navigate(['/signin']);

@@ -32,21 +32,29 @@ onLogin() {
   if (this.signinForm.valid) {
     const email = this.signinForm.value.email.toLowerCase();
     const selectedRole = this.signinForm.value.role;
+    const enteredpassword=this.signinForm.value.password;
  
     // Retrieve the role saved during registration
-    const registeredRole = localStorage.getItem(email);
+   // const registeredRole = localStorage.getItem(email);
+    const storedUserJson = localStorage.getItem(email);
  
-    if (!registeredRole) {
+    if (!storedUserJson) {
       alert('Email not found. Please register first.');
       return;
     }
- 
-    // Check if the role selected matches the role registered
-    if (selectedRole !== registeredRole) {
-      alert(`Access Denied: not ${selectedRole}.`);
+    const registeredUser = JSON.parse(storedUserJson);
+    if (selectedRole !== registeredUser.role) {
+      alert(`Access Denied: You are registered as ${registeredUser.role}, not ${selectedRole}.`);
       return;
     }
- 
+
+    if (enteredpassword !== registeredUser.password) {
+      alert('Invalid Password. Please try again.');
+      return;
+    }
+    
+    
+    localStorage.setItem('isLoggedIn', 'true');
     alert('Login Successful!');
  
     // Role-based navigation using your folder structure
