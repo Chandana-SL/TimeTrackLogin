@@ -102,7 +102,7 @@ export class AuthService {
     const r = role.toLowerCase();
     
     if (r === 'admin') {
-      this.router.navigate(['/admin/dashboard']);
+      this.router.navigate(['/admin']);
     } else if (r === 'employee') {
       this.router.navigate(['/employee/dashboardemployee']);
     } else {
