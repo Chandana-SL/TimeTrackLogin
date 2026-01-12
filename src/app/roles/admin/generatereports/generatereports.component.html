@@ -1,1 +1,165 @@
-<p>generatereports works!</p>
+<div class="organization-analytics-tab">
+  <!-- Header with Title and Actions -->
+  <div class="header-row">
+    <div class="title-block">
+      <h2 class="title">Organization Analytics</h2>
+      <p class="subtitle">Insights and performance across departments</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" type="button" (click)="refreshData()">Refresh</button>
+      <button class="btn-export" type="button" (click)="exportReport()">Export</button>
+    </div>
+  </div>
+
+  <!-- KPI Summary Section -->
+  <section class="kpi-section">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-icon">⏱️</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Total Hours</div>
+          <div class="kpi-value">{{ summary.totalHours }} hrs</div>
+          <div class="kpi-sub">Organization</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">👤</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Avg Hours/Employee</div>
+          <div class="kpi-value">{{ summary.avgHoursPerEmployee }} hrs</div>
+          <div class="kpi-sub">Per employee</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Task Completion</div>
+          <div class="kpi-value">{{ summary.taskCompletionPct }}%</div>
+          <div class="kpi-sub">1 of 5</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">🟢</div>
+        <div class="kpi-content">
+          <div class="kpi-label">Active Employees</div>
+          <div class="kpi-value">{{ summary.activeEmployees }}</div>
+          <div class="kpi-sub">Currently active</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters Section -->
+  <section class="filters-section">
+    <div class="filters-left">
+      <label class="filter-label">
+        Period:
+        <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()" class="filter-select">
+          <option *ngFor="let p of availablePeriods" [value]="p.value">{{ p.label }}</option>
+        </select>
+      </label>
+      <label class="filter-label">
+        Department:
+        <select [(ngModel)]="selectedDepartment" (change)="onDepartmentChange()" class="filter-select">
+          <option value="All">All</option>
+          <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+        </select>
+      </label>
+    </div>
+    <div class="filters-right">
+      <button class="filter-btn" type="button" (click)="refreshData()">Refresh</button>
+      <button class="filter-btn" type="button" (click)="resetFilters()">Reset</button>
+    </div>
+  </section>
+
+  <!-- Charts Grid -->
+  <section class="charts-section">
+    <div class="chart-card">
+      <h3 class="chart-title">Organization Hours Trend (Last {{ selectedPeriod }} Days)</h3>
+      <div class="chart-container">
+        <canvas #hoursTrendCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3 class="chart-title">User Role Distribution</h3>
+      <div class="chart-container">
+        <canvas #roleDistributionCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3 class="chart-title">Hours by Department</h3>
+      <div class="chart-container">
+        <canvas #hoursByDeptCanvas></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <h3 class="chart-title">Task Status Overview</h3>
+      <div class="chart-container">
+        <canvas #taskStatusCanvas></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Department Performance Table -->
+  <section class="table-section">
+    <h3 class="section-title">Department Performance Details</h3>
+    <div class="table-wrapper">
+      <table class="performance-table">
+        <thead>
+          <tr>
+            <th>Department</th>
+            <th>Employees</th>
+            <th>Total Hours</th>
+            <th>Completed Tasks</th>
+            <th>Avg Hours/Employee</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of departmentRows" [ngClass]="{ 'zero-data': row.totalHours === 0 }">
+            <td class="dept-name">{{ row.department }}</td>
+            <td>{{ row.employees }}</td>
+            <td>{{ row.totalHours | number:'1.1-1' }} hrs</td>
+            <td>{{ row.completedTasks }}</td>
+            <td>{{ row.avgHoursPerEmployee | number:'1.1-1' }} hrs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Key Insights -->
+  <section class="insights-section">
+    <h3 class="section-title">Key Organizational Insights</h3>
+    <div class="insights-grid">
+      <div class="insight-card info">
+        <div class="insight-icon">ℹ️</div>
+        <div class="insight-content">
+          <h4>Productivity Overview</h4>
+          <p>Organization has logged <strong>{{ summary.totalHours }} total hours</strong> with an average of <strong>{{ summary.avgHoursPerEmployee }} hours</strong> per employee.</p>
+        </div>
+      </div>
+
+      <div class="insight-card success">
+        <div class="insight-icon">✓</div>
+        <div class="insight-content">
+          <h4>Task Performance</h4>
+          <p><strong>{{ summary.taskCompletionPct }}%</strong> task completion rate across the organization.</p>
+        </div>
+      </div>
+
+      <div class="insight-card warning">
+        <div class="insight-icon">⚠️</div>
+        <div class="insight-content">
+          <h4>Department Distribution</h4>
+          <p><strong>{{ departments.length }}</strong> departments with an average of <strong>{{ summary.avgEmployeesPerDept | number:'1.1-1' }}</strong> employees per department.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
