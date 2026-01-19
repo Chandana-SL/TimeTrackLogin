@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
 import { LogHoursComponent } from "../loghours/loghours.component";
 import { TasksComponent } from "../tasksassigned/tasksassigned.component";
 import { PersonalreportsComponent } from '../personalreports/personalreports.component';
@@ -11,25 +12,30 @@ import { PersonalreportsComponent } from '../personalreports/personalreports.com
   styleUrl: './dashboardemployee.component.css',
 })
 export class DashboardemployeeComponent {
-  employeeName = 'John Doe';
-  // In a real app, fetch this from your Auth Service
-  userRole = 'Employee';
-  showDropdown = false;
-
-
-  toggleDropdown() {
-    this.showDropdown = !this.showDropdown;
-  }
+  constructor(private router: Router) {}
 
   logout() {
-    console.log('Logging out employee...'); //
-    // Add your logout logic/redirection here
+    this.router.navigate(['']);
   }
-
-  // Default to 'time-logging' as per the LLD primary feature
+  employeeName: string = 'John Doe'; 
+  userRole: string = 'Employee';
   activeTab: string = 'time-logging';
+  
+  showDropdown: boolean = false;
+  showNotifications: boolean = false; // Controls the bell dropdown
+  unreadCount: number = 1;
 
   setActiveTab(tab: string) {
     this.activeTab = tab;
+  }
+
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
+    this.showNotifications = false; // Close others
+  }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+    this.showDropdown = false; // Close others
   }
 }
