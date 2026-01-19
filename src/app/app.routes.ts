@@ -1,5 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './roles/auth/home/home.component';
+import { HomeComponent } from './home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { managerGuard } from './core/guards/manager.guard';
@@ -7,10 +7,10 @@ import { employeeGuard } from './core/guards/employee.guard';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'signup', loadComponent: () => import('./roles/auth/home/signup/signup.component').then(m => m.SignupComponent) },
+    { path: 'signup', loadComponent: () => import('./home/signup/signup.component').then(m => m.SignupComponent) },
     {
         path: 'signin',
-        loadComponent: () => import('./roles/auth/home/signin/signin.component').then(m => m.SigninComponent)
+        loadComponent: () => import('./home/signin/signin.component').then(m => m.SigninComponent)
     },
     { path: 'admin/dashboard', loadComponent: () => import('./roles/admin/dashboard/dashboard.component').then(m => m.DashboardComponent), canActivate: [adminGuard] },
 
