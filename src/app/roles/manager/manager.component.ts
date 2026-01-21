@@ -5,6 +5,7 @@ import { TeamLogsComponent } from './team-logs/team-logs.component';
 import { TaskManagementComponent } from './task-management/task-management.component';
 import { TeamAnalyticsComponent } from './team-analytics/team-analytics.component';
 import { ManagerDataService } from '../../core/services/manager-data.service'; // Ensure this path is correct
+import { AuthService } from '../../core/services/auth.service'; // Add this import
 
 @Component({
   selector: 'app-manager',
@@ -25,7 +26,8 @@ export class ManagerComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private dataService: ManagerDataService // Inject the service
+    private dataService: ManagerDataService, // Inject the service
+    private authService: AuthService // Add this injection
   ) {}
 
   ngOnInit() {
@@ -63,6 +65,13 @@ export class ManagerComponent implements OnInit {
   }
 
   onLogout() {
-    this.router.navigate(['']);
+    // 1. Clear the navbar data in ManagerDataService
+  this.dataService.clearUser();
+
+  // 2. Clear the session in AuthService
+  this.authService.logout();
+
+  // 3. Navigate back to sign-in
+  this.router.navigate(['/signin']);
   }
 }

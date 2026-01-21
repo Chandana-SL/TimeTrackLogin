@@ -2,28 +2,14 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root' // <--- This is the most important line
+  providedIn: 'root'
 })
 export class ManagerDataService {
 
-// manager-data.service.ts
-private currentUserSubject = new BehaviorSubject<any>({
-  name: 'Loading...', 
-  role: '',
-  initial: ''
-});
-
+  // UPDATED: Initial state now calls getSavedUser() to prevent "Loading..." on refresh
+  private currentUserSubject = new BehaviorSubject<any>(this.getSavedUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
-// Call this function when a user logs in to update the navbar globally
-setUser(name: string, role: string) {
-  this.currentUserSubject.next({
-    name: name,
-    role: role,
-    initial: name.charAt(0).toUpperCase()
-  });
-}
-  
   // 1. DUMMY DATA FOR TIME LOGS
   private initialLogs = [
     { employee: 'Akash', date: 'Jan 12', startTime: '09:00', endTime: '17:30', break: 60, totalHours: 7.50 },
@@ -53,34 +39,65 @@ setUser(name: string, role: string) {
     { name: 'Umesh', hours: 40.2, tasks: 6, efficiency: 98, status: 'Excellent' }
   ];
 
-  // BehaviorSubjects to store data state
   private logsSubject = new BehaviorSubject<any[]>(this.initialLogs);
   private tasksSubject = new BehaviorSubject<any[]>(this.initialTasks);
   private perfSubject = new BehaviorSubject<any[]>(this.initialPerformance);
 
-  // Observables for components to listen to
   logs$ = this.logsSubject.asObservable();
   tasks$ = this.tasksSubject.asObservable();
   performance$ = this.perfSubject.asObservable();
 
   constructor() {}
 
-  // Methods to update data (Future API hooks)
+  // NEW: Helper to recover user data from storage during page refresh
+  private getSavedUser() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const saved = localStorage.getItem('user_session');
+      if (saved) {
+        const user = JSON.parse(saved);
+        // Prioritize fullName from signup to ensure it displays correctly
+        const name = user.fullName || user.firstName || 'Manager';
+        return {
+          name: name,
+          role: user.role,
+          initial: name.charAt(0).toUpperCase()
+        };
+      }
+    }
+    return { name: 'Loading...', role: '', initial: '' };
+  }
+
+  // Updates the navbar globally
+  setUser(name: string, role: string) {
+    this.currentUserSubject.next({
+      name: name,
+      role: role,
+      initial: name.charAt(0).toUpperCase()
+    });
+  }
+
+  // NEW: Resets the navbar data back to default on logout
+  clearUser() {
+    this.currentUserSubject.next({
+      name: 'Loading...',
+      role: '',
+      initial: ''
+    });
+  }
+
   addLog(log: any) {
     const current = this.logsSubject.value;
     this.logsSubject.next([...current, log]);
   }
 
-// Inside ManagerDataService class
-addTask(task: any) {
-  const currentTasks = this.tasksSubject.value;
-  // .next updates all components listening to tasks$
-  this.tasksSubject.next([task, ...currentTasks]);
-}
+  addTask(task: any) {
+    const currentTasks = this.tasksSubject.value;
+    this.tasksSubject.next([task, ...currentTasks]);
+  }
 
-deleteTask(index: number) {
-  const currentTasks = this.tasksSubject.value;
-  currentTasks.splice(index, 1);
-  this.tasksSubject.next([...currentTasks]);
-}
+  deleteTask(index: number) {
+    const currentTasks = this.tasksSubject.value;
+    currentTasks.splice(index, 1);
+    this.tasksSubject.next([...currentTasks]);
+  }
 }
