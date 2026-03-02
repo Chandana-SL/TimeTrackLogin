@@ -76,11 +76,11 @@ export class AuthService {
     const r = role.toLowerCase();
 
     if (r === 'admin') {
-      this.router.navigate(['/admin/users']);
+      this.router.navigate(['/admin/users'], { replaceUrl: true });
     } else if (r === 'employee') {
-      this.router.navigate(['/employee/loghours']);
+      this.router.navigate(['/employee/loghours'], { replaceUrl: true });
     } else {
-      this.router.navigate(['/manager/team-logs']);
+      this.router.navigate(['/manager/team-logs'], { replaceUrl: true });
     }
   }
 

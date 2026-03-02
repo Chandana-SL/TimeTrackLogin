@@ -9,6 +9,41 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 /**
+ * No-Auth Guard
+ * Prevents logged-in users from accessing unauthenticated routes like sign-in, signup, home
+ */
+export const noAuthGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
+
+  if (isPlatformBrowser(platformId)) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+      // Get user role and redirect to their dashboard
+      const userSession = localStorage.getItem('user_session');
+      if (userSession) {
+        const user = JSON.parse(userSession);
+        const role = user.role?.toLowerCase();
+
+        if (role === 'admin') {
+          router.navigate(['/admin/users'], { replaceUrl: true });
+        } else if (role === 'manager') {
+          router.navigate(['/manager/team-logs'], { replaceUrl: true });
+        } else if (role === 'employee') {
+          router.navigate(['/employee/loghours'], { replaceUrl: true });
+        } else {
+          router.navigate(['/'], { replaceUrl: true });
+        }
+      } else {
+        router.navigate(['/'], { replaceUrl: true });
+      }
+      return false;
+    }
+  }
+  return true;
+};
+
+/**
  * Authentication Guard
  * Checks if user is logged in before accessing any protected routes
  */
