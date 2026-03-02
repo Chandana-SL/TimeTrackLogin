@@ -43,14 +43,27 @@ export class ManagerComponent implements OnInit {
   ngOnInit() {
     console.log('🔄 ManagerComponent initialized - Loading all data');
 
-    // Navbar user info
-    this.dataService.currentUser$.subscribe(userData => {
-      const fullName = userData.fullName || userData.name || 'Manager';
+    // Navbar user info - Get from AuthService first (for immediate display on refresh)
+    const authUser = this.authService.currentUser();
+    if (authUser) {
+      const fullName = authUser.fullName || authUser.firstName || authUser.name || 'Manager';
       this.user = {
         name: fullName,
-        role: userData.role,
+        role: authUser.role,
         initial: fullName.charAt(0).toUpperCase()
       };
+    }
+
+    // Also subscribe to dataService changes for live updates
+    this.dataService.currentUser$.subscribe(userData => {
+      if (userData && userData.name) {
+        const fullName = userData.fullName || userData.name || 'Manager';
+        this.user = {
+          name: fullName,
+          role: userData.role,
+          initial: fullName.charAt(0).toUpperCase()
+        };
+      }
     });
 
     // Active tasks & completion rate (from data service)

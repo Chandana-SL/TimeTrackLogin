@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, combineLatest, interval } from 'rxjs';
 import { map, startWith, tap, switchMap } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { TimeLogService } from './time-log.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import { TimeLogService } from './time-log.service';
 export class ManagerDataService {
   private apiService = inject(ApiService);
   private timeLogService = inject(TimeLogService);
+  private authService = inject(AuthService);
 
   // User session management
   private currentUserSubject = new BehaviorSubject<any>(this.getSavedUser());
@@ -25,22 +27,16 @@ export class ManagerDataService {
   performance$ = this.perfSubject.asObservable();
 
   constructor() {
-    // DISABLED: Causes 401 Unauthorized errors on page load
-    // this.loadTeamData();
-    this.setUser('Manager User', 'Manager');
-
-    // DISABLED: Auto-refresh polling causes repeated 401 errors
-    // Use manual refresh buttons instead to load data when authenticated
-    // interval(5000).pipe(
-    //   switchMap(() => this.getTeamDataFromBackend())
-    // ).subscribe(
-    //   (data: any) => {
-    //     if (data && data.logs) {
-    //       this.logsSubject.next(data.logs);
-    //     }
-    //   }
-    // );
-
+    // Initialize from AuthService currentUser signal
+    const authUser = this.authService.currentUser();
+    if (authUser) {
+      const name = authUser.fullName || authUser.firstName || authUser.name || 'User';
+      this.currentUserSubject.next({
+        name: name,
+        role: authUser.role,
+        initial: name.charAt(0).toUpperCase()
+      });
+    }
     // Load from localStorage on initialization
     this.loadFromLocalStorage();
   }
