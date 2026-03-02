@@ -19,7 +19,7 @@ export class EmployeeComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private timeLogService = inject(TimeLogService);
-  
+
   employeeName: string = 'Employee';
   userRole: string = 'Employee';
   profileInitial: string = 'E';
@@ -31,11 +31,11 @@ export class EmployeeComponent implements OnInit {
     if (currentUser) {
       // Use fullName directly
       const fullName = currentUser.fullName || 'Employee';
-      
+
       this.employeeName = fullName;
       this.userRole = currentUser.role || 'Employee';
       this.profileInitial = fullName.charAt(0).toUpperCase();
-      
+
       console.log('Employee loaded:', {
         fullName: this.employeeName,
         role: this.userRole,
@@ -61,11 +61,11 @@ export class EmployeeComponent implements OnInit {
   logout() {
     // Set signal for loghours component to clear state on next init
     localStorage.setItem('clear_loghours_state', 'true');
-    
+
     // Save the final time log before logging out
     this.timeLogService.saveDailyTimeLog();
-    
+
     this.authService.logout();
-    this.router.navigate(['/signin']);
+    // AuthService.logout() already navigates to /signin, so no need to navigate again
   }
 }

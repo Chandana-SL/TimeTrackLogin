@@ -244,8 +244,9 @@ export class ManagerComponent implements OnInit {
   }
 
   onLogout() {
+    // Clear both services to ensure complete logout
     this.dataService.clearUser();
     this.authService.logout();
-    this.router.navigate(['/signin']);
+    // AuthService.logout() already navigates to /signin, so no need to navigate again
   }
 }

@@ -2,6 +2,7 @@ import { Component, HostListener, ElementRef, ViewChild, OnInit } from '@angular
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, RouterModule } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ProfileModalComponent } from '../../shared/profile-modal/profile-modal.component';
 import { NotificationComponent } from '../../shared/notification/notification.component';
 
@@ -14,7 +15,7 @@ import { NotificationComponent } from '../../shared/notification/notification.co
 })
 export class AdminComponent implements OnInit {
   isDropdownOpen = false;
-  
+
   // User statistics
   totalEmployees = 0;
   activeEmployees = 0;
@@ -24,13 +25,13 @@ export class AdminComponent implements OnInit {
   inactiveManagers = 0;
   totalActiveUsers = 0;
   totalInactiveUsers = 0;
-  
+
   // Filter states
   selectedFilter: 'none' | 'active' | 'inactive' = 'none';
   displayFilter: { label: string; count: number } | null = null;
   showingActiveInactive = false;
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router, private userService: UserService, private authService: AuthService) { }
 
   // Reference to the profile section to check click location
   @ViewChild('profileContainer') profileContainer!: ElementRef;
@@ -48,19 +49,19 @@ export class AdminComponent implements OnInit {
     this.userService.getUsers().subscribe(users => {
       // Filter out null/undefined users from backend response
       const validUsers = users.filter(u => u != null && u.role != null);
-      
+
       // Calculate employee statistics
       const employees = validUsers.filter(u => u.role === 'Employee');
       this.totalEmployees = employees.length;
       this.activeEmployees = employees.filter(u => u.status === 'Active').length;
       this.inactiveEmployees = employees.filter(u => u.status === 'Inactive').length;
-      
+
       // Calculate manager statistics
       const managers = validUsers.filter(u => u.role === 'Manager');
       this.totalManagers = managers.length;
       this.activeManagers = managers.filter(u => u.status === 'Active').length;
       this.inactiveManagers = managers.filter(u => u.status === 'Inactive').length;
-      
+
       // Calculate total active/inactive users
       this.totalActiveUsers = this.activeEmployees + this.activeManagers;
       this.totalInactiveUsers = this.inactiveEmployees + this.inactiveManagers;
@@ -97,7 +98,8 @@ export class AdminComponent implements OnInit {
   }
 
   onLogout() {
-    this.router.navigate(['']);
+    this.authService.logout();
+    // AuthService.logout() already navigates to /signin
   }
 
   openProfile() {
